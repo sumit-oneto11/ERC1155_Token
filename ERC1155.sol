@@ -29,6 +29,9 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     // Mapping from account to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
+    // Mapping from account to operator approvals for single token
+    mapping(address => mapping(address => mapping(uint256 => bool))) private _operatorApprovalsForSingle;
+
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
 
@@ -107,6 +110,13 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      */
     function setApprovalForAll(address operator, bool approved) public virtual override {
         _setApprovalForAll(_msgSender(), operator, approved);
+    }
+
+    /**
+     * @dev See {IERC1155-setApprovalForSingle}.
+     */                                                                                                        
+    function setApprovalForSingle(address operator, bool approved, uint256 _tokenId) public virtual override {
+        _setApprovalForSingle(_msgSender(), operator, approved, _tokenId);
     }
 
     /**
@@ -406,7 +416,39 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         address owner,
         address operator,
         bool approved
-    ) internal virtual {
+    ) internal virtual { 
+        require(owner != operator, "ERC1155: setting approval status for self");
+        _operatorApprovals[owner][operator] = approved;
+        emit ApprovalForAll(owner, operator, approved);
+    }
+
+
+    /**
+     * @dev Approve `operator` to operate on single token of `owner`
+     *
+     * Emits an {ApprovalForSingle} event.
+     */
+    function _setApprovalForSingle(
+        address owner,
+        address operator,
+        bool approved,
+        uint256 _tokenId
+    ) internal virtual { 
+        require(owner != operator, "ERC1155: setting approval status for self");
+        _operatorApprovalsForSingle[owner][operator][_tokenId] = approved;
+        emit ApprovalForSingle(owner, operator, approved, _tokenId);
+    }
+
+     /**
+     * @dev Approve `operator` to operate on all of `owner` tokens
+     *
+     * Emits an {ApprovalForAll} event.
+     */
+    function _setApproval(
+        address owner,
+        address operator,
+        bool approved
+    ) internal virtual { 
         require(owner != operator, "ERC1155: setting approval status for self");
         _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);

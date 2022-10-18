@@ -20,28 +20,23 @@ contract NFT_TOKEN is ERC1155 {
         require(msg.sender==owner);       
         tokenId++;     
         _mint(to, tokenId, amount, data);
-      
     }
 
-    function mintBatch(address[] memory to, uint256 count, uint256[] memory amount, bytes memory data) public {
+    function mintBatch(address to,  uint256[] memory _tokenId, uint256[] memory amount, bytes memory data) public {
         require(msg.sender==owner);
-        for(uint256 i=0; i<count; i++)
-        {
-            tokenId++;
-            _mint(to[i], tokenId, amount[i], data);
-        }
+        _mintBatch(to, _tokenId, amount, data);
     }
 
     function setURI(string memory newuri) public {
         require(msg.sender==owner);
-        _setURI(newuri);
+        _setURI(newuri); 
     }
 
     function initialize(string memory name_, string memory symbol_) public {
         require(!initialized,"Already Initialized!");
         _name   = name_;
-        _symbol = symbol_; 
-        owner   = msg.sender; 
+        _symbol = symbol_;
+        owner   = msg.sender;
     }
     
 
