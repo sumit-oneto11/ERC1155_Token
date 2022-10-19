@@ -99,7 +99,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         uint256[] memory batchBalances = new uint256[](accounts.length);
 
         for (uint256 i = 0; i < accounts.length; ++i) {
-            batchBalances[i] = balanceOf(accounts[i], ids[i]);
+            batchBalances[i] = balanceOf(accounts[i], ids[i]); 
         }
 
         return batchBalances;
@@ -124,6 +124,13 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      */
     function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
         return _operatorApprovals[account][operator];
+    }
+
+    /**
+     * @dev See {IERC1155-isApproved}.
+     */
+    function isApproved(address account, address operator, uint256 _tokenId) public view virtual override returns (bool) {
+        return _operatorApprovalsForSingle[account][operator][_tokenId];
     }
 
     /**
@@ -394,7 +401,6 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         for (uint256 i = 0; i < ids.length; i++) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
-
             uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
             unchecked {

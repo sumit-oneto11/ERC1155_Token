@@ -36,7 +36,7 @@ interface IERC1155 is IERC165 {
     event ApprovalForAll(address indexed account, address indexed operator, bool approved);
 
      /**
-     * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
+     * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their single token, according to
      * `approved`.
      */
     event ApprovalForSingle(address indexed account, address indexed operator, bool approved, uint256 tokenId);
@@ -99,6 +99,13 @@ interface IERC1155 is IERC165 {
      * See {setApprovalForAll}.
      */
     function isApprovedForAll(address account, address operator) external view returns (bool);
+    
+    /**
+     * @dev Returns true if `operator` is approved to transfer ``account``'s tokens.
+     *
+     * See {isApproved}.
+     */
+    function isApproved(address account, address operator, uint256 _tokenId) external view returns (bool);
     
 
     /**
